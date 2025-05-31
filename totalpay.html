@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ملخص الطلب</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .summary-container {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      width: 360px;
+      direction: rtl;
+      text-align: right;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #094792;
+    }
+    .item {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    .payment-methods {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .payment-btn {
+      flex: 1;
+      cursor: pointer;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      padding: 10px 8px;
+      background: white;
+      text-align: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+    }
+    .payment-btn img {
+      max-width: 50px;
+      margin-bottom: 8px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .payment-btn.selected {
+      border-color: #094792;
+      box-shadow: 0 0 10px rgba(9, 71, 146, 0.6);
+      background: #e6f0ff;
+    }
+    .payment-btn span {
+      display: block;
+      font-weight: bold;
+      color: #094792;
+    }
+    button.confirm-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #003e7e;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button.confirm-btn:hover {
+      background-color: #002a57;
+    }
+
+    #texte{
+        margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+  <div class="summary-container">
+    <h2>ملخص الطلب</h2>
+
+    <div class="item"><strong>الفئة:</strong> <span id="category"></span></div>
+    <div class="item"><strong>الكمية:</strong> <span id="quantity"></span></div>
+    <div class="item"><strong>السعر الإجمالي:</strong> <span id="totalPrice"></span> ريال</div>
+
+    <label><strong>اختر طريقة الدفع:</strong></label>
+    <div class="payment-methods">
+      <div class="payment-btn" data-method="credit-card" tabindex="0">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwVGeNIfNvHJOY0XR2I8hv6JSaglxwN3opdg&s" alt="omantel " />
+        <span id="texte">oman tel </span>
+      </div>
+      <div class="payment-btn" data-method="bank-transfer" tabindex="0">
+        <img src="https://img.icons8.com/ios-filled/50/000000/bank-building.png" alt="فيزا / ماستر كارد " />
+        <span>فيزا / ماستر كارد  </span>
+      </div>
+      <div class="payment-btn" data-method="cash" tabindex="0">
+        <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="فيزا عالمية   " />
+        <span> فيزا عالمية </span>
+      </div>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn">تأكيد الطلب</button>
+  </div>
+
+  <script>
+    // جلب البيانات من localStorage
+    const category = localStorage.getItem('category') || 'غير محدد';
+    const quantity = localStorage.getItem('quantity') || 'غير محدد';
+    const totalPrice = localStorage.getItem('totalPrice') || '0.00';
+
+    // عرض البيانات في الصفحة
+    document.getElementById('category').textContent = category;
+    document.getElementById('quantity').textContent = quantity;
+    document.getElementById('totalPrice').textContent = totalPrice;
+
+    let selectedPaymentMethod = null;
+
+    const paymentButtons = document.querySelectorAll('.payment-btn');
+    paymentButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // إزالة التحديد من الكل
+        paymentButtons.forEach(b => b.classList.remove('selected'));
+        // تعيين المحدد
+        btn.classList.add('selected');
+        selectedPaymentMethod = btn.getAttribute('data-method');
+      });
+      // دعم الكيبورد (Enter) للتحديد
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+
+    document.getElementById('confirmBtn').addEventListener('click', () => {
+      if (!selectedPaymentMethod) {
+        alert('الرجاء اختيار طريقة الدفع.');
+        return;
+      }
+      localStorage.setItem('paymentMethod', selectedPaymentMethod);
+
+
+      // يمكنك إضافة الانتقال لصفحة أخرى أو استكمال الإجراءات هنا
+       window.location.href = 'omannet.html';
+    });
+  </script>
+</body>
+</html>

